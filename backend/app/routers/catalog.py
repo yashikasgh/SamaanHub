@@ -23,10 +23,15 @@ def dec(s: str) -> dict:
 def cache(resp: Response, seconds: int):
     resp.headers["Cache-Control"] = f"public, max-age={seconds}, stale-while-revalidate={seconds * 5}"
 
+def clean_url(url: str | None) -> str | None:
+    if url and ("https://localhost" in url or "https://127.0.0.1" in url):
+        return url.replace("https://", "http://")
+    return url
+
 def card(r) -> dict:
     return {"id": r["id"], "slug": r["slug"], "name": r["name"],
             "price": float(r["price"]) if r["price"] is not None else None,
-            "currency": r["currency"], "availability": r["availability"], "thumb": r["thumb_url"]}
+            "currency": r["currency"], "availability": r["availability"], "thumb": clean_url(r["thumb_url"])}
 
 @router.get("/config")
 def get_config(resp: Response, conn=Depends(get_conn)):
@@ -122,7 +127,7 @@ def product_detail(slug: str, resp: Response, conn=Depends(get_conn)):
         "compare_at_price": float(p["compare_at_price"]) if p["compare_at_price"] is not None else None,
         "currency": p["currency"], "availability": p["availability"], "stock_quantity": p["stock_quantity"],
         "source_url": p["source_url"],
-        "images": [{"url": base_url(i["cdn_public_id"]) if i["cdn_public_id"] else i["original_url"], "alt": i["alt"]} for i in imgs],
+        "images": [{"url": clean_url(base_url(i["cdn_public_id"]) if i["cdn_public_id"] else i["original_url"]), "alt": i["alt"]} for i in imgs],
         "variants": [{**dict(v), "price": float(v["price"]) if v["price"] is not None else None} for v in variants],
         "categories": [dict(c) for c in cats],
     }

@@ -7,6 +7,10 @@ export function CategoryNav({ activeSlug }: { activeSlug?: string }) {
 
   if (isLoading || !categories?.length) return null;
 
+  // Deduplicate categories by name so customers don't see e.g. "Doormats" twice
+  // (caused by identical categories imported from multiple sources like Shopify and WooCommerce)
+  const uniqueCategories = categories.filter((c, i, a) => a.findIndex(x => x.name === c.name) === i);
+
   return (
     <div className="w-full overflow-x-auto no-scrollbar border-b border-stone-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-8">
@@ -18,7 +22,7 @@ export function CategoryNav({ activeSlug }: { activeSlug?: string }) {
         >
           All
         </Link>
-        {categories.map(c => (
+        {uniqueCategories.map(c => (
           <Link 
             key={c.id}
             to={`/categories/${c.slug}`}
