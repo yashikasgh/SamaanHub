@@ -7,9 +7,13 @@ from .base import NProduct, NImage, NVariant, NCategory, SourceError
 class WooAdapter:
     def _get(self, path: str, params: dict | None = None):
         url = f"{settings.wc_base_url.rstrip('/')}/wp-json/wc/v3/{path}"
+        headers = {}
+        if url.startswith("http://"):
+            headers["X-Forwarded-Proto"] = "https"
+
         for attempt in range(3):
             try:
-                r = httpx.get(url, params=params, auth=(settings.wc_consumer_key, settings.wc_consumer_secret), timeout=30)
+                r = httpx.get(url, params=params, auth=(settings.wc_consumer_key, settings.wc_consumer_secret), headers=headers, timeout=30)
             except httpx.HTTPError:
                 if attempt == 2:
                     raise SourceError("WooCommerce site is unreachable")

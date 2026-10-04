@@ -57,7 +57,10 @@ class ShopifyAdapter:
                 raise SourceError("Shopify credentials rejected")
             if r.status_code >= 500:
                 time.sleep(2); continue
-            r.raise_for_status()
+            try:
+                r.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                raise SourceError(f"Shopify API HTTP error: {e.response.status_code} - {e.response.text[:100]}")
             j = r.json()
             if "errors" in j:
                 if "THROTTLED" in str(j["errors"]):
