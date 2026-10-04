@@ -12,60 +12,78 @@ export function ProductCard({ product }: { product: ProductCardType }) {
   const outOfStock = product.availability !== 'in_stock';
 
   return (
-    <div className="group relative flex flex-col bg-white border border-stone-200 hover:border-stone-300 transition-colors rounded-sm overflow-hidden shadow-sm">
-      <Link to={`/products/${product.slug}`} className="block relative aspect-square bg-stone-100 overflow-hidden">
+    <div className="group relative flex flex-col bg-transparent overflow-hidden">
+      <Link to={`/products/${product.slug}`} className="block relative aspect-[4/5] bg-cream-100 overflow-hidden mb-4 rounded-sm">
         {product.thumb ? (
           <img 
             src={product.thumb} 
             alt={product.name} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-stone-400 font-serif text-sm">
-            No Image
+          <div className="w-full h-full flex items-center justify-center bg-cream-200">
+            <span className="font-serif text-charcoal-800/40 text-sm italic">Image unavailable</span>
           </div>
         )}
         {outOfStock && (
-          <div className="absolute top-2 left-2 bg-white/90 px-2 py-1 text-xs uppercase tracking-wider text-stone-800 border border-stone-200">
-            Out of Stock
+          <div className="absolute top-3 left-3 bg-ivory-50/95 backdrop-blur-sm px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-charcoal-900 rounded-sm">
+            Sold Out
           </div>
         )}
-      </Link>
-      
-      <div className="p-4 flex flex-col flex-grow">
-        <Link to={`/products/${product.slug}`} className="block mb-1">
-          <h3 className="font-serif text-stone-800 text-lg leading-tight line-clamp-2">{product.name}</h3>
-        </Link>
-        <div className="text-stone-600 mb-4 font-sans text-sm tracking-wide">
-          {product.price !== null ? `${product.currency} ${product.price.toLocaleString()}` : 'Price on Request'}
-        </div>
         
-        <div className="mt-auto flex items-center justify-between gap-1 sm:gap-2">
+        {/* Quick actions overlay on desktop hover */}
+        <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden lg:block bg-gradient-to-t from-charcoal-900/40 to-transparent">
           <button 
-            onClick={() => toggleEnquiry(product.id)}
+            onClick={(e) => { e.preventDefault(); toggleEnquiry(product.id); }}
             disabled={outOfStock && !isEnquired}
-            className={`flex-1 py-2 px-2 sm:px-4 text-[10px] sm:text-xs font-sans tracking-wider sm:tracking-widest uppercase transition-colors border text-center ${
+            className={`w-full py-3 text-xs font-sans tracking-[0.2em] uppercase transition-colors rounded-sm shadow-sm ${
               isEnquired 
-                ? 'bg-olive-500 text-white border-olive-500' 
+                ? 'bg-olive-500 text-ivory-50' 
                 : outOfStock 
-                  ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
-                  : 'bg-stone-900 text-white border-stone-900 hover:bg-stone-800'
+                  ? 'bg-cream-200/90 text-charcoal-800/50 cursor-not-allowed backdrop-blur-md'
+                  : 'bg-ivory-50/95 text-charcoal-900 hover:bg-ivory-50 backdrop-blur-md'
             }`}
           >
-            {isEnquired ? 'Added' : 'Enquiry'}
-          </button>
-          
-          <button 
-            onClick={() => toggleWishlist(product.id)}
-            className="p-2 text-stone-400 hover:text-terracotta-500 transition-colors"
-            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          >
-            <svg className={`w-5 h-5 ${isWishlisted ? 'fill-terracotta-500 text-terracotta-500' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+            {isEnquired ? 'Added' : 'Enquire'}
           </button>
         </div>
+      </Link>
+      
+      <div className="flex justify-between items-start">
+        <Link to={`/products/${product.slug}`} className="block flex-1 pr-4">
+          <h3 className="font-serif text-charcoal-900 text-lg lg:text-xl font-medium leading-tight mb-1.5 hover:text-terracotta-500 transition-colors line-clamp-2">{product.name}</h3>
+          <div className="text-charcoal-800/70 font-sans text-sm tracking-wide font-light">
+            {product.price !== null ? `${product.currency} ${product.price.toLocaleString()}` : 'Price on Request'}
+          </div>
+        </Link>
+        
+        <button 
+          onClick={() => toggleWishlist(product.id)}
+          className="p-1.5 -mr-1.5 text-charcoal-800/40 hover:text-terracotta-500 transition-colors z-10"
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <svg className={`w-5 h-5 transition-all ${isWishlisted ? 'fill-terracotta-500 text-terracotta-500' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile action button (since hover isn't good on mobile) */}
+      <div className="mt-4 lg:hidden">
+        <button 
+          onClick={() => toggleEnquiry(product.id)}
+          disabled={outOfStock && !isEnquired}
+          className={`w-full py-2.5 text-[10px] font-sans tracking-[0.2em] uppercase transition-colors rounded-sm border ${
+            isEnquired 
+              ? 'bg-olive-500 text-ivory-50 border-olive-500' 
+              : outOfStock 
+                ? 'bg-transparent text-charcoal-800/30 border-charcoal-800/10 cursor-not-allowed'
+                : 'bg-transparent text-charcoal-900 border-charcoal-900 hover:bg-charcoal-900 hover:text-ivory-50'
+          }`}
+        >
+          {isEnquired ? 'Added' : 'Enquire'}
+        </button>
       </div>
     </div>
   );
