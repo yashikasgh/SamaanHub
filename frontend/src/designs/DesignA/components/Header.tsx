@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useWishlist } from '../../../hooks/useWishlist';
 import { useEnquiry } from '../../../hooks/useEnquiry';
@@ -29,7 +29,7 @@ export function Header({ storeName }: { storeName: string }) {
     }
   };
 
-  const uniqueCategories = categories?.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.name === c.name) === i) || [];
+  const uniqueCategories = useMemo(() => categories?.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.name === c.name) === i) || [], [categories]);
 
   return (
     <>

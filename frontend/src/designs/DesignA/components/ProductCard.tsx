@@ -1,9 +1,11 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ProductCard as ProductCardType } from '../../../api/types';
 import { useWishlist } from '../../../hooks/useWishlist';
 import { useEnquiry } from '../../../hooks/useEnquiry';
+import { getOptimizedImageUrl } from '../../../utils/image';
 
-export function ProductCard({ product }: { product: ProductCardType }) {
+export const ProductCard = React.memo(function ProductCard({ product }: { product: ProductCardType }) {
   const { wishlist, toggle: toggleWishlist } = useWishlist();
   const { enquiry, toggle: toggleEnquiry } = useEnquiry();
 
@@ -16,10 +18,11 @@ export function ProductCard({ product }: { product: ProductCardType }) {
       <Link to={`/products/${product.slug}`} className="block relative aspect-[4/3] bg-cream-100 overflow-hidden mb-4 rounded-xl">
         {product.thumb ? (
           <img 
-            src={product.thumb} 
+            src={getOptimizedImageUrl(product.thumb, 500) || undefined} 
             alt={product.name} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-cream-200">
@@ -70,4 +73,4 @@ export function ProductCard({ product }: { product: ProductCardType }) {
       </div>
     </div>
   );
-}
+});

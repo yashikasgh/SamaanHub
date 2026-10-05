@@ -3,6 +3,7 @@ import { useProduct, useRelatedProducts, useStoreConfig } from '../../../api/que
 import { ProductList } from './ProductList';
 import { useWishlist } from '../../../hooks/useWishlist';
 import { useEnquiry } from '../../../hooks/useEnquiry';
+import { getOptimizedImageUrl } from '../../../utils/image';
 
 export function ProductDetailView({ slug }: { slug: string }) {
   const { data: product, isLoading, error } = useProduct(slug);
@@ -36,10 +37,11 @@ export function ProductDetailView({ slug }: { slug: string }) {
                 {product.images.map((img, idx) => (
                   <div key={idx} className={`w-full bg-[#e8e3d9] relative group overflow-hidden rounded-2xl ${idx === 0 ? 'md:col-span-2 aspect-[16/9]' : 'aspect-[3/4]'}`}>
                     <img 
-                      src={img.url} 
+                      src={getOptimizedImageUrl(img.url, idx === 0 ? 1200 : 800) || undefined} 
                       alt={img.alt || product.name}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
                       loading={idx === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
                     />
                   </div>
                 ))}

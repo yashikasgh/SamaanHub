@@ -1,4 +1,4 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
 import { catalogApi } from './client';
 
 export const queryKeys = {
@@ -33,6 +33,7 @@ export function useProducts(filters: { category?: string; q?: string; sort?: str
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.has_more ? lastPage.next_cursor : undefined,
     staleTime: 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 }
 

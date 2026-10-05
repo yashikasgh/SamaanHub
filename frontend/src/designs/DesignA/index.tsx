@@ -15,7 +15,7 @@ function HomeView() {
   const { data: categories } = useCategories();
   
   const featuredProducts = data?.pages[0]?.items || [];
-  const uniqueCategories = categories?.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.name === c.name) === i) || [];
+  const uniqueCategories = useMemo(() => categories?.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.name === c.name) === i) || [], [categories]);
 
   return (
     <div className="bg-ivory-50">
@@ -159,8 +159,7 @@ function CategoryListingView({ slug }: { slug?: string }) {
   const products = useMemo(() => {
     return data?.pages.flatMap((page: any) => page.items) || [];
   }, [data]);
-  
-  const uniqueCategories = categoriesData?.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.name === c.name) === i) || [];
+  const uniqueCategories = useMemo(() => categoriesData?.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.name === c.name) === i) || [], [categoriesData]);
 
   return (
     <div className="bg-ivory-50 min-h-screen">

@@ -6,6 +6,7 @@ import { useWishlist } from '../../../hooks/useWishlist';
 import { useEnquiry } from '../../../hooks/useEnquiry';
 import { Link } from 'react-router-dom';
 import { ProductCard } from './ProductCard';
+import { getOptimizedImageUrl } from '../../../utils/image';
 
 export function ProductDetailView({ slug }: { slug: string }) {
   const { data: product, isLoading, error } = useProduct(slug);
@@ -55,7 +56,7 @@ export function ProductDetailView({ slug }: { slug: string }) {
                   onClick={() => setMainImageIdx(idx)}
                   className={`w-full aspect-square bg-cream-100 rounded-xl overflow-hidden transition-all duration-300 ${mainImageIdx === idx ? 'ring-1 ring-charcoal-900 ring-offset-2 ring-offset-ivory-50 opacity-100' : 'opacity-60 hover:opacity-100'}`}
                 >
-                  <img src={img.url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  <img src={getOptimizedImageUrl(img.url, 150) || undefined} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>
@@ -64,9 +65,10 @@ export function ProductDetailView({ slug }: { slug: string }) {
             <div className="flex-1 bg-cream-100 rounded-2xl overflow-hidden relative group">
               {product.images.length > 0 ? (
                 <img 
-                  src={product.images[mainImageIdx].url} 
+                  src={getOptimizedImageUrl(product.images[mainImageIdx].url, 1200) || undefined} 
                   alt={product.images[mainImageIdx].alt || product.name}
                   className="w-full h-full object-cover cursor-zoom-in transition-transform duration-1000 group-hover:scale-[1.02]"
+                  decoding="async"
                   onClick={() => setLightboxIndex(mainImageIdx)}
                 />
               ) : (
