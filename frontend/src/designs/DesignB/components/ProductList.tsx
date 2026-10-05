@@ -51,7 +51,7 @@ export function ProductList({ products, isLoading, hasMore, fetchNextPage, isFet
 
           return (
             <div key={`${p.id}-${idx}`} className={`${colSpan} ${height}`}>
-              <ProductCard product={p} featured={featured} />
+              <ProductCard product={p} />
             </div>
           );
         })}

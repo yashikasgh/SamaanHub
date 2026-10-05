@@ -12,7 +12,7 @@ export function ProductDetailView({ slug }: { slug: string }) {
   const { enquiry, toggle: toggleEnquiry } = useEnquiry();
 
   if (isLoading) {
-    return <div className="max-w-[2000px] mx-auto px-4 py-24 animate-pulse flex flex-col lg:flex-row gap-12"><div className="w-full lg:w-2/3 h-screen bg-cream-100"></div><div className="w-full lg:w-1/3 space-y-6 mt-12"><div className="h-12 bg-cream-100 w-3/4"></div><div className="h-6 bg-cream-100 w-1/4"></div></div></div>;
+    return <div className="max-w-[1440px] mx-auto px-4 py-24 animate-pulse flex flex-col lg:flex-row gap-12"><div className="w-full lg:w-2/3 h-screen bg-[#e8e3d9]"></div><div className="w-full lg:w-1/3 space-y-6 mt-12"><div className="h-12 bg-[#e8e3d9] w-3/4"></div><div className="h-6 bg-[#e8e3d9] w-1/4"></div></div></div>;
   }
 
   if (error || !product) {
@@ -24,99 +24,115 @@ export function ProductDetailView({ slug }: { slug: string }) {
   const outOfStock = product.availability !== 'in_stock';
 
   return (
-    <div className="bg-ivory-50 pb-32">
-      <div className="max-w-[2000px] mx-auto px-4 sm:px-8 lg:px-12 pt-6">
+    <div className="bg-[#f6ebd8] pb-32">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="flex flex-col lg:flex-row gap-12 xl:gap-24">
           
-          {/* Vertical Image Stack - Left Side (2/3 width) */}
-          <div className="w-full lg:w-[60%] xl:w-[65%] flex flex-col gap-4 pt-12">
+          {/* Asymmetric Gallery - Left Side (2/3 width) */}
+          <div className="w-full lg:w-[65%] flex flex-col gap-6 pt-12">
             {product.images.length > 0 ? (
-              product.images.map((img, idx) => (
-                <div key={idx} className="w-full bg-cream-100 relative group overflow-hidden">
-                  <img 
-                    src={img.url} 
-                    alt={img.alt || product.name}
-                    className="w-full h-auto min-h-[60vh] object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
-                    loading={idx === 0 ? 'eager' : 'lazy'}
-                  />
-                </div>
-              ))
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                {product.images.map((img, idx) => (
+                  <div key={idx} className={`w-full bg-[#e8e3d9] relative group overflow-hidden rounded-2xl ${idx === 0 ? 'md:col-span-2 aspect-[16/9]' : 'aspect-[3/4]'}`}>
+                    <img 
+                      src={img.url} 
+                      alt={img.alt || product.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+                      loading={idx === 0 ? 'eager' : 'lazy'}
+                    />
+                  </div>
+                ))}
+              </div>
             ) : (
-              <div className="w-full aspect-square flex items-center justify-center text-charcoal-800/40 font-serif italic bg-cream-200 text-2xl">
+              <div className="w-full aspect-[16/9] flex items-center justify-center text-charcoal-800/40 font-serif italic bg-[#e8e3d9] text-2xl rounded-2xl">
                 Visual not available
               </div>
             )}
           </div>
 
           {/* Sticky Info Panel - Right Side (1/3 width) */}
-          <div className="w-full lg:w-[40%] xl:w-[35%] relative">
+          <div className="w-full lg:w-[35%] relative">
             <div className="lg:sticky lg:top-32 lg:pb-32 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto no-scrollbar pt-12">
               
-              <div className="mb-6 flex justify-between items-center">
-                <div className="text-[10px] font-sans tracking-[0.3em] uppercase text-terracotta-500">
+              <div className="mb-4 flex justify-between items-center">
+                <div className="text-[10px] font-sans tracking-[0.2em] uppercase text-[#b87661]">
                   {product.categories.map(c => c.name).join(' — ')}
                 </div>
                 {outOfStock && (
-                  <span className="bg-charcoal-900 text-ivory-50 px-2.5 py-1 text-[9px] uppercase tracking-widest">Sold Out</span>
+                  <span className="bg-charcoal-900 text-white px-2.5 py-1 text-[9px] uppercase tracking-widest rounded-full">Sold Out</span>
                 )}
               </div>
               
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-serif text-charcoal-900 leading-[1.1] mb-8">
+              <h1 className="text-4xl md:text-5xl font-serif text-charcoal-900 leading-[1.1] mb-6">
                 {product.name}
               </h1>
 
-              <div className="text-2xl text-charcoal-800 font-sans tracking-widest mb-12 font-light">
+              <div className="text-2xl text-charcoal-900 font-sans mb-10 font-medium">
                 {product.price !== null ? (
-                  <span>{product.currency} {product.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  <span>{product.currency === 'INR' ? '₹' : product.currency}{product.price.toLocaleString(undefined, { minimumFractionDigits: 0 })}</span>
                 ) : (
                   <span>Price on Request</span>
                 )}
               </div>
               
-              <div className="flex flex-col gap-4 mb-16">
+              <div className="flex flex-col gap-4 mb-12">
+                <button
+                  onClick={() => {
+                    const number = "919876543210";
+                    const msg = `Hi, I'm interested in ${product.name}. Link: ${window.location.origin}/products/${product.slug}`;
+                    window.open(`https://wa.me/${number}?text=${encodeURIComponent(msg)}`, '_blank');
+                  }}
+                  className={`w-full py-4 text-[11px] font-sans tracking-[0.2em] uppercase transition-all rounded-full shadow-lg ${
+                    outOfStock 
+                      ? 'bg-transparent text-charcoal-800/40 cursor-not-allowed border border-[#e4d4b8]'
+                      : 'bg-[#b87661] text-white hover:bg-[#a66854] border border-[#b87661]'
+                  }`}
+                >
+                  Enquire on WhatsApp
+                </button>
                 <button
                   onClick={() => toggleEnquiry(product.id)}
                   disabled={outOfStock && !isEnquired}
-                  className={`w-full py-5 text-[11px] font-sans tracking-[0.3em] uppercase transition-all rounded-sm shadow-xl ${
+                  className={`w-full py-4 text-[11px] font-sans tracking-[0.2em] uppercase transition-all rounded-full ${
                     isEnquired 
-                      ? 'bg-olive-500 text-ivory-50 border border-olive-500' 
+                      ? 'bg-[#8c9a76] text-white border border-[#8c9a76]' 
                       : outOfStock 
-                        ? 'bg-transparent text-charcoal-800/40 cursor-not-allowed border border-charcoal-900/20'
-                        : 'bg-charcoal-900 text-ivory-50 hover:bg-terracotta-500 hover:border-terracotta-500 border border-charcoal-900'
+                        ? 'bg-transparent text-charcoal-800/40 cursor-not-allowed border border-[#e4d4b8]'
+                        : 'bg-transparent text-charcoal-900 hover:bg-charcoal-900 hover:text-white border border-charcoal-900'
                   }`}
                 >
-                  {isEnquired ? 'Added to Enquiry' : 'Enquire'}
+                  {isEnquired ? 'Added to Enquiry' : 'Add to Enquiry'}
                 </button>
 
                 <button
                   onClick={() => toggleWishlist(product.id)}
-                  className={`w-full py-4 text-[11px] font-sans tracking-[0.3em] uppercase transition-colors border ${
+                  className={`w-full py-4 text-[11px] font-sans tracking-[0.2em] uppercase transition-colors border rounded-full ${
                     isWishlisted 
-                      ? 'border-terracotta-500 text-terracotta-500 bg-transparent' 
-                      : 'border-charcoal-900/20 text-charcoal-900 hover:border-charcoal-900'
+                      ? 'border-[#b87661] text-[#b87661] bg-transparent' 
+                      : 'border-[#e4d4b8] text-charcoal-900 hover:border-charcoal-900'
                   }`}
                 >
                   {isWishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
                 </button>
               </div>
 
-              <div className="mb-12 border-l-2 border-olive-400 pl-6 py-2">
-                <p className="text-sm font-sans font-light text-charcoal-800 leading-relaxed italic">
+              <div className="mb-10 border-l-2 border-[#b87661] pl-6 py-1">
+                <p className="text-sm font-sans font-light text-charcoal-800/80 leading-relaxed italic">
                   A statement of intent. Carefully sourced and meticulously crafted for those who demand excellence in every detail.
                 </p>
               </div>
 
               {/* Description */}
-              <div className="border-t border-charcoal-900/10 py-8">
-                <div className="prose prose-sm max-w-none font-sans font-light text-charcoal-800/80 leading-loose" dangerouslySetInnerHTML={{ __html: product.description_html || '<p>No detail provided.</p>' }} />
+              <div className="border-t border-[#e4d4b8] py-8">
+                <div className="prose prose-sm max-w-none font-sans font-light text-charcoal-800/80 leading-relaxed" dangerouslySetInnerHTML={{ __html: product.description_html || '<p>No detail provided.</p>' }} />
               </div>
               
               {product.variants.length > 0 && (
-                <div className="border-t border-charcoal-900/10 py-8">
+                <div className="border-t border-[#e4d4b8] py-8">
                   <h3 className="text-[10px] font-sans tracking-[0.2em] uppercase text-charcoal-900 mb-4">Available Iterations</h3>
                   <div className="flex flex-wrap gap-2">
                     {product.variants.map((v, i) => (
-                      <span key={i} className="text-xs font-serif italic text-charcoal-800 px-3 py-1 border border-charcoal-900/20">
+                      <span key={i} className="text-xs font-serif italic text-charcoal-800 px-3 py-1 border border-[#e4d4b8] rounded-full bg-white/50">
                         {v.title}
                       </span>
                     ))}
@@ -127,10 +143,10 @@ export function ProductDetailView({ slug }: { slug: string }) {
           </div>
         </div>
 
-        {/* Related Products - Asymmetric */}
+        {/* Related Products */}
         {related && related.length > 0 && (
-          <div className="mt-40 pt-20 border-t border-charcoal-900/10">
-            <h2 className="text-4xl md:text-5xl font-serif text-charcoal-900 mb-16 text-center">Curated Pairings</h2>
+          <div className="mt-32 pt-20 border-t border-[#e4d4b8]">
+            <h2 className="text-4xl md:text-5xl font-serif text-charcoal-900 mb-12 text-center">Curated Pairings</h2>
             <ProductList products={related.slice(0, 4)} isLoading={false} hasMore={false} fetchNextPage={() => {}} isFetchingNextPage={false} />
           </div>
         )}
