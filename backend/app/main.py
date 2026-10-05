@@ -7,7 +7,7 @@ from .config import settings
 from .db import engine
 from .routers import catalog, admin
 
-app = FastAPI(title="CatalogForge API")
+app = FastAPI(title="SamaanHub API")
 app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(
     CORSMiddleware,

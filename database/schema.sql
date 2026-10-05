@@ -133,6 +133,6 @@ create table settings (
 );
 insert into settings(key,value) values
   ('active_design','"design_a"'), ('whatsapp_number','""'), 
-  ('store_name','"CatalogForge Demo"'), ('currency','"INR"');
+  ('store_name','"SamaanHub"'), ('currency','"INR"');
 
 insert into sources(type,name) values ('manual','Manual'),('shopify','Shopify Demo'),('woocommerce','WooCommerce Demo');
