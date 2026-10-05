@@ -1,6 +1,12 @@
 import { StoreConfig, Category, PaginatedProducts, ProductDetail, ProductCard } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+if (!configuredApiBaseUrl && !import.meta.env.DEV) {
+  throw new Error('VITE_API_BASE_URL must be set for production builds.');
+}
+
+const API_BASE_URL = (configuredApiBaseUrl || 'http://localhost:8000/api').replace(/\/$/, '');
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {

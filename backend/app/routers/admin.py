@@ -88,14 +88,17 @@ def get_settings(conn = Depends(get_conn), admin: dict = Depends(get_current_adm
     return {k: v for k, v in rows}
 
 class SettingsUpdate(BaseModel):
-    settings: dict[str, str]
+    # JSONB settings can legitimately contain strings, booleans, numbers, and
+    # objects.  Keep their Python values intact until serializing for Postgres.
+    settings: dict[str, Any]
 
 @router.post("/settings")
 def update_settings(req: SettingsUpdate, conn = Depends(get_conn), admin: dict = Depends(get_current_admin)):
     for k, v in req.settings.items():
         conn.execute(
-            text("insert into settings (key, value) values (:k, :v) on conflict (key) do update set value = :v"),
-            {"k": k, "v": v}
+            text("""insert into settings (key, value) values (:k, cast(:v as jsonb))
+                    on conflict (key) do update set value = cast(:v as jsonb), updated_at = now()"""),
+            {"k": k, "v": json.dumps(v)}
         )
     conn.commit()
     return {"status": "ok"}
