@@ -13,6 +13,8 @@ export default function CatalogRoot() {
     view = { type: 'product', slug };
   } else if (location.pathname.startsWith('/categories/') && slug) {
     view = { type: 'category', slug };
+  } else if (location.pathname === '/wishlist') {
+    view = { type: 'wishlist' };
   }
 
   return <DesignRegistry view={view} />;

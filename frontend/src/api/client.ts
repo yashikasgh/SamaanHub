@@ -52,4 +52,9 @@ export const catalogApi = {
   getProduct: (slug: string) => fetchJson<ProductDetail>(`/catalog/products/${slug}`),
   
   getRelatedProducts: (slug: string) => fetchJson<{ items: ProductCard[] }>(`/catalog/products/${slug}/related`).then(res => res.items),
+  
+  getProductsByIds: (ids: string[]) => fetchJson<{ items: ProductCard[] }>('/catalog/products/by-ids', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  }).then(res => res.items),
 };

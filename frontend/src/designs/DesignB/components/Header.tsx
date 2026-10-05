@@ -24,7 +24,7 @@ export function Header({ storeName }: { storeName: string }) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (search.trim()) {
-      navigate(`/?q=${encodeURIComponent(search.trim())}`);
+      navigate(`/categories/all?q=${encodeURIComponent(search.trim())}`);
       setMobileMenuOpen(false);
     }
   };

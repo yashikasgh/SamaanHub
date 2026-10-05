@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProduct, useRelatedProducts } from '../../../api/queries';
+import { useProduct, useRelatedProducts, useStoreConfig } from '../../../api/queries';
 import { ProductList } from './ProductList';
 import { useWishlist } from '../../../hooks/useWishlist';
 import { useEnquiry } from '../../../hooks/useEnquiry';
@@ -8,6 +8,7 @@ export function ProductDetailView({ slug }: { slug: string }) {
   const { data: product, isLoading, error } = useProduct(slug);
   const { data: related } = useRelatedProducts(slug);
   
+  const { data: config } = useStoreConfig();
   const { wishlist, toggle: toggleWishlist } = useWishlist();
   const { enquiry, toggle: toggleEnquiry } = useEnquiry();
 
@@ -78,7 +79,11 @@ export function ProductDetailView({ slug }: { slug: string }) {
               <div className="flex flex-col gap-4 mb-12">
                 <button
                   onClick={() => {
-                    const number = "919876543210";
+                    if (!config?.whatsapp_number) {
+                      alert("WhatsApp number is not configured.");
+                      return;
+                    }
+                    const number = config.whatsapp_number.replace(/[^0-9]/g, '').replace(/^0+/, '');
                     const msg = `Hi, I'm interested in ${product.name}. Link: ${window.location.origin}/products/${product.slug}`;
                     window.open(`https://wa.me/${number}?text=${encodeURIComponent(msg)}`, '_blank');
                   }}

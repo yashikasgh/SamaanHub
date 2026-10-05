@@ -9,6 +9,7 @@ export default function App() {
       <Route path="/" element={<CatalogRoot />} />
       <Route path="/products/:slug" element={<CatalogRoot />} />
       <Route path="/categories/:slug" element={<CatalogRoot />} />
+      <Route path="/wishlist" element={<CatalogRoot />} />
       <Route path="/admin/*" element={<AdminRoot />} />
     </Routes>
   );

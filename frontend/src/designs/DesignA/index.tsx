@@ -4,7 +4,8 @@ import { Header } from './components/Header';
 import { CategoryNav } from './components/CategoryNav';
 import { ProductList } from './components/ProductList';
 import { ProductDetailView } from './components/ProductDetailView';
-import { useProducts, useCategories } from '../../api/queries';
+import { useProducts, useCategories, useProductsByIds } from '../../api/queries';
+import { useWishlist } from '../../hooks/useWishlist';
 import { useLocation, Link } from 'react-router-dom';
 import { ProductCard as ProductCardType } from '../../api/types';
 import { ProductCard } from './components/ProductCard';
@@ -270,6 +271,38 @@ function CategoryListingView({ slug }: { slug?: string }) {
   );
 }
 
+function WishlistView() {
+  const { wishlist } = useWishlist();
+  const { data: products, isLoading } = useProductsByIds(wishlist);
+
+  return (
+    <div className="bg-ivory-50 min-h-screen">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-charcoal-900 italic mb-12 text-center">Your Wishlist</h1>
+        
+        {wishlist.length === 0 ? (
+          <div className="text-center max-w-lg mx-auto py-12">
+            <p className="text-charcoal-800/70 font-sans font-light mb-8">Your wishlist is currently empty. Start exploring our collection to find pieces you love.</p>
+            <Link to="/categories/all" className="inline-block bg-[#b87661] text-white px-8 py-4 text-xs font-sans tracking-[0.1em] hover:bg-[#a66854] transition-colors rounded-full shadow-sm">
+              EXPLORE COLLECTION &rarr;
+            </Link>
+          </div>
+        ) : isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map(i => <div key={i} className="w-full h-96 bg-cream-100 animate-pulse rounded-2xl"></div>)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products?.map(p => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function DesignA({ config, view }: DesignProps) {
   return (
     <div className="min-h-screen bg-ivory-100 text-charcoal-900 font-sans flex flex-col selection:bg-terracotta-500/20">
@@ -279,6 +312,7 @@ export default function DesignA({ config, view }: DesignProps) {
         {view.type === 'home' && <HomeView />}
         {view.type === 'category' && <CategoryListingView slug={view.slug} />}
         {view.type === 'product' && <ProductDetailView slug={view.slug} />}
+        {view.type === 'wishlist' && <WishlistView />}
       </div>
       
       <footer className="mt-auto py-16 md:py-24 bg-olive-500 text-cream-100">

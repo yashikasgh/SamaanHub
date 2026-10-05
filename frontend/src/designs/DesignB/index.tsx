@@ -4,7 +4,8 @@ import { Header } from './components/Header';
 import { CategoryNav } from './components/CategoryNav';
 import { ProductList } from './components/ProductList';
 import { ProductDetailView } from './components/ProductDetailView';
-import { useProducts, useCategories } from '../../api/queries';
+import { useProducts, useCategories, useProductsByIds } from '../../api/queries';
+import { useWishlist } from '../../hooks/useWishlist';
 import { useLocation, Link } from 'react-router-dom';
 import { ProductCard } from './components/ProductCard';
 import { ProductCard as ProductCardType } from '../../api/types';
@@ -248,6 +249,30 @@ function CategoryListingView({ slug }: { slug?: string }) {
   );
 }
 
+function WishlistView() {
+  const { wishlist } = useWishlist();
+  const { data: products, isLoading } = useProductsByIds(wishlist);
+
+  return (
+    <div className="bg-[#f6ebd8] min-h-screen">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-charcoal-900 mb-16 text-center">Gallery Selections</h1>
+        
+        {wishlist.length === 0 ? (
+          <div className="text-center max-w-lg mx-auto py-16">
+            <p className="text-charcoal-800/70 font-sans font-light mb-10 text-lg">Your curated gallery is currently empty.</p>
+            <Link to="/categories/all" className="inline-block px-12 py-4 bg-charcoal-900 text-ivory-50 hover:bg-[#b87661] transition-colors tracking-[0.2em] text-[11px] uppercase font-sans rounded-full shadow-xl">
+              Explore Catalog
+            </Link>
+          </div>
+        ) : (
+          <ProductList products={products || []} isLoading={isLoading} hasMore={false} fetchNextPage={() => {}} isFetchingNextPage={false} />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function DesignB({ config, view }: DesignProps) {
   return (
     <div className="min-h-screen bg-[#f6ebd8] text-charcoal-900 font-sans flex flex-col selection:bg-[#a48873]/30">
@@ -257,6 +282,7 @@ export default function DesignB({ config, view }: DesignProps) {
         {view.type === 'home' && <HomeView />}
         {view.type === 'category' && <CategoryListingView slug={view.slug} />}
         {view.type === 'product' && <ProductDetailView slug={view.slug} />}
+        {view.type === 'wishlist' && <WishlistView />}
       </div>
       
       <footer className="mt-auto py-20 bg-[#3b342f] text-[#f6ebd8] border-t border-[#3b342f]">

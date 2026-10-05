@@ -33,7 +33,8 @@ export function EnquiryBar({ storeName, whatsappNumber }: { storeName: string, w
       msg += `   Link: ${window.location.origin}/products/${p.slug}\n\n`;
     });
     
-    const url = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
+    const number = whatsappNumber.replace(/[^0-9]/g, '').replace(/^0+/, '');
+    const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
   };
 

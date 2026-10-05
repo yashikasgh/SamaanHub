@@ -7,6 +7,7 @@ export const queryKeys = {
   products: (filters: any) => ['products', filters] as const,
   product: (slug: string) => ['product', slug] as const,
   relatedProducts: (slug: string) => ['relatedProducts', slug] as const,
+  productsByIds: (ids: string[]) => ['productsByIds', ids] as const,
 };
 
 export function useStoreConfig() {
@@ -49,6 +50,15 @@ export function useRelatedProducts(slug: string) {
     queryKey: queryKeys.relatedProducts(slug),
     queryFn: () => catalogApi.getRelatedProducts(slug),
     enabled: !!slug,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useProductsByIds(ids: string[]) {
+  return useQuery({
+    queryKey: queryKeys.productsByIds(ids),
+    queryFn: () => catalogApi.getProductsByIds(ids),
+    enabled: ids.length > 0,
     staleTime: 60 * 1000,
   });
 }
